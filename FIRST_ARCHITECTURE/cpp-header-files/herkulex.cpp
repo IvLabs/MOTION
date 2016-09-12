@@ -1,7 +1,4 @@
-#ifndef HERKULEX_H
-#define HERKULEX_H
-
-#include <iostream>
+#include "herkulex.h"
 
 const unsigned int EEP_WRITE_REQ = 0x01
 const unsigned int EEP_READ_REQ = 0x02
@@ -86,7 +83,7 @@ const unsigned int PACKET_GARBAGE_CHECK_PERIOD_EEP 46
 const unsigned int BYTE2 = 0x02
 const unsigned int BROADCAST_ID = 0xFE
 
-int servo::get_model(void)
+/*int servo::get_model(void)
 {
   int data[9];
   data[0]=0xFF; //header
@@ -100,14 +97,14 @@ int servo::get_model(void)
   data[8]=BYTE1;
   send_data(data); //to uart.h
   return get_data(); //from uart.h
-}
+}*/
 
-void servo::get_data()
+/*void servo::get_data()
 {
   
-}
+}*/
 
-int checksum1(int data[], int datalength)
+int servo::checksum1(int data[], int datalength)
 {
   unsigned int value_buffer=0;
   for(int count=0; count<datalength; count++)
@@ -115,13 +112,13 @@ int checksum1(int data[], int datalength)
   return (value_buffer & 0xFE);
 }
 
-int checksum2(int csm1)
+int servo::checksum2(int csm1)
 {
   csm2 = (~csm1) & 0xFE;
   return csm2;
 }
 
-float scale(int input_value,int input_min,int input_max,int out_min, out_max)
+float servo::scale(int input_value,int input_min,int input_max,int out_min, int out_max)
 {
   int input_span = input_max - input_min;
   int output_span = out_max - out_min;
@@ -129,26 +126,7 @@ float scale(int input_value,int input_min,int input_max,int out_min, out_max)
   return out_min + (valuescaled * output_span);
 }
 
-class servo
-{
-private:
-  int servo_id, servomodel;
-  
-public:
-  servo(int servoid)
-  {
-    servo_id = servoid;
-    servomodel = get_model();
-  }
-    int get_model();
-    int get_servo_status();
-    float scale(int,int,int,int);
-    int checksum2(int);
-    int checksum1(vector<unsigned int>,int);
-};
-
-int servo::get_servo_status(void)
-
+/*int servo::get_servo_status(void)
 {
   vector <unsigned int> data;
   data.push_back(0x09);
@@ -157,30 +135,50 @@ int servo::get_servo_status(void)
   data.push_back(MODEL_NO1_EEP);
   data.push_back(BYTE1);
   send_data(data);
-}
+}*/
 
 int servo::torque_on(void)
-
 {
-
+  int data[10];
+  data[0]=0xFF; //header
+  data[1]=0xFF;
+  data[2]=0x0A; //packet_size
+  data[3]=servo_id;
+  data[4]=RAM_WRITE_REQ;
+  data[5]=checksum1(data, datalength);
+  data[6]=checksum2(csm1);
+  data[7]=TORQUE_CONTROL_RAM;
+  data[8]=0x01;
+  data[8]=0x60;
+  send_data(data); //to uart.h
 }
 
 int servo::torque_off(void)
+{
+  int data[10];
+  data[0]=0xFF; //header
+  data[1]=0xFF;
+  data[2]=0x0A; //packet_size
+  data[3]=servo_id;
+  data[4]=RAM_WRITE_REQ;
+  data[5]=checksum1(data, datalength);
+  data[6]=checksum2(csm1);
+  data[7]=TORQUE_CONTROL_RAM;
+  data[8]=0x01;
+  data[8]=0x00;
+  send_data(data); //to uart.h
+}
+
+/*int servo::get_servo_angle(void)
 
 {
 
-}
-
-int servo::get_servo_angle(void)
-
-{
-
-}
+}*/
 
 int servo::set_servo_angle(int goalangle,int goaltime,int led)
-
 {
-
+  float goalposition = scale(goalangle, -150, 150, 21, 1002);
+  set_servo_position(goalposition, goaltime, led)
 }
 
 
