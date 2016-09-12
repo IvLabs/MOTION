@@ -88,30 +88,26 @@ const unsigned int BROADCAST_ID = 0xFE
 
 int servo::get_model(void)
 {
-  vector <unsigned int> data;
-  data.push_back(0x09);
-  data.push_back(servo_id);
-  data.push_back(EEP_READ_REQ);
-  data.push_back(MODEL_NO1_EEP);
-  data.push_back(BYTE1);
-  send_data(data);
-  return get_data();
+  int data[9];
+  data[0]=0xFF; //header
+  data[1]=0xFF;
+  data[2]=0x09; //packet_size
+  data[3]=servo_id;
+  data[4]=EEP_READ_REQ;
+  data[5]=checksum1(data, datalength);
+  data[6]=checksum2(csm1);
+  data[7]=MODEL_NO1_EEP;
+  data[8]=BYTE1;
+  send_data(data); //to uart.h
+  return get_data(); //from uart.h
 }
 
-void servo::send_data(vector<unsigned int> &data)
-{
-  int datalength = data.size();
-  int csm1 = checksum1(data, datalength);
-  int csm2 = checksum2(csm1);
-  data.insert(data.begin()+0, 0xFF); 
-  data.insert(data.begin()+1, 0xFF);
-  data.insert(data.begin()+5, csm1); 
-  data.insert(data.begin()+6, csm2);
-  uart(data);
-}
 void servo::get_data()
+{
+  
+}
 
-int checksum1(vector<unsigned int> data,int datalength)
+int checksum1(int data[], int datalength)
 {
   unsigned int value_buffer=0;
   for(int count=0; count<datalength; count++)
