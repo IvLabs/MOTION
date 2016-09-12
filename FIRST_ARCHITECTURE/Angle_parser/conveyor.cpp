@@ -12,7 +12,6 @@ HerkulexClass::torqueON(motor_id[i]);
 
 void chatterCallback(const motion::angles::ConstPtr& ang_msg) //ang_msg object
 {
-  //ROS_INFO("I heard: [%s]", msg->data.c_str());
   for (int num=0; num<10; num++)
    {
      motor[num] = ang_msg.angle_to_motor[num];
@@ -35,7 +34,7 @@ int main(int argc, char **argv)
     
     for (int i=0; i<10; i++)
      {
-       HerkulexClass::moveOne(motor_id[i], motor[num], 22, 1);
+       HerkulexClass::moveOne(motor_id[i], motor[num], 33, 1);
        
      }
     loop_rate.sleep();
