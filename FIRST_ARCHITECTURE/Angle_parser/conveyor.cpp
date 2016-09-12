@@ -27,7 +27,7 @@ int main(int argc, char **argv)
  
   ros::Subscriber sub_ang = n.subscribe("parse_to_motor", 1000, chatterCallback);
   
-  ros::Rate loop_rate(50);
+  ros::Rate loop_rate(33);
   while (ros::ok())
   {
     ros::spinOnce(); //check for incoming messages
