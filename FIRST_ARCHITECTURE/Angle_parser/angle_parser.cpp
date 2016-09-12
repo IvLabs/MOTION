@@ -10,8 +10,8 @@ int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
    vect2d data;//2d vector,int
-   int row=10;//row thet we want to read from csv file
-   int col=10;//col thet we want to read from csv file
+   int row=10;//row that we want to read from csv file
+   int col=10;//col that we want to read from csv file
    data=file.storeCSV2array("/home/sakshi/.ros/try1.csv",row,col);//by default,the path is taken from .ros
   
 
