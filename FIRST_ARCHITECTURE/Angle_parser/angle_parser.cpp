@@ -4,9 +4,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <readCSV.cpp>
-#include <fstream>
-#include <sstream>
-#include "swayat/array10.h"
+#include "swayat/angles10.h"
 
 int main(int argc, char **argv)
 {
@@ -21,16 +19,16 @@ int main(int argc, char **argv)
 
    ros::init(argc, argv, "angle_parser");//node name=angle_parser
    ros::NodeHandle n;
-   ros::Publisher ang_pub = n.advertise<swayat::array10>("angle_to_motor", 10);//topic name=angle_to_motor
+   ros::Publisher ang_pub = n.advertise<swayat::angles10>("angle_to_motor", 10);//topic name=angle_to_motor
    
 
 
-   swayat::array10 arr;
-   int no_of_cycles=1;
+   swayat::angles10 arr;
+   int no_of_cycles=9;
    int k=0;
    while (ros::ok())
    {
-   if (k<1)
+   if (k<no_of_cycles)
      {
       for(int i=0;i<row;i++)
         { 
@@ -38,14 +36,14 @@ int main(int argc, char **argv)
           ROS_INFO("row=%d",i);
           for(int j=0;j<col;j++)
              {
-               arr.Array[j]=data[i][j];//putting values from data to arr row by row
+               angles10.angle2motor[j]=data[i][j];//putting values from data to arr row by row
              }
           ang_pub.publish(arr);//publishing to topic angle_to_motor
           ROS_INFO("published");
+          
           loop_rate.sleep();
         }
-    
-       //ros::spinOnce();
+     //ros::spinOnce();
      k++;   
      }    
    }
