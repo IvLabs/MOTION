@@ -10,7 +10,7 @@ HerkulexClass::torqueON(motor_id[i]);
 
 /////////////////
 
-void chatterCallback(const motion::angles::ConstPtr& ang_msg) //ang_msg object
+void chatterCallback(const motion::angles10::ConstPtr& ang_msg) //ang_msg object
 {
   for (int num=0; num<10; num++)
    {
