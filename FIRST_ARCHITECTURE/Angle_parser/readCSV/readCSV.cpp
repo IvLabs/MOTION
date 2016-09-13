@@ -25,7 +25,7 @@ std::vector<std::vector<int> > data(row, std::vector<int>(col));
         if ( !iss.good() )
 	     break;
 	        std::stringstream convertor(val);
-            convertor >> data[i][j];
+            convertor >> data[j][i];
     }
     
     }
