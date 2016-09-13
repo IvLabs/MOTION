@@ -1,34 +1,40 @@
 //input the number of rows and columns of the csv sheet
+//13/9/16
+//written by-sakshi
 #include "readCSV.h"
 
-vect2d readCSV::storeCSV2array(const char* const filename,int row,int col)
+std::vector<int> readCSV::storeCSV2array(const char* const filename,int row,int col)
 {
 //file opening	
-std::ifstream file(filename);
-if ( !file.good() )
-          {
-			std::cout << "error while opening file.";
-          }
-//storing data to 2d vector data[][]
-std::vector<std::vector<int> > data(row, std::vector<int>(col));
-	for(int i = 0; i < row; i++)
+std::ifstream infile(filename);
+ std:: vector<std::string> data;
+  std::  string line;
+std::cout << "process started" << std::endl;
+if ( !infile.good() )
+     {
+     std::cout << "error while opening file.";
+     exit (EXIT_FAILURE);
+     }
+
+while (getline(infile, line))
+    {   
+    data.push_back(line);
+    }
+infile.close();
+
+  /*  for (int i = 0; i < data.size(); ++i)
     {
-        std::string line;
-        std::getline(file, line);
-        if ( !file.good() )
-         break;
-        std::stringstream iss(line);
-        for (int j = 0; i<col; j++)
-        {
-            std::string val;
-            std::getline(iss, val, ',');
-        if ( !iss.good() )
-	     break;
-	        std::stringstream convertor(val);
-            convertor >> data[j][i];
-    }
+       std::cout << data[i] <<std::endl;
+     } *///for testing   
+//converting vector<std::string> to vector<int>
+
     
-    }
-   
-return data;  
+std::vector<int> Data;
+for (int i=0; i< data.size(); i++)
+   {
+    int num = atoi(data.at(i).c_str());
+    Data.push_back(num);
+   }
+
+return Data;  
 }
