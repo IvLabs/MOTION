@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <vector>
 
-typedef std::vector<std::vector<int> >  vect2d;
+
 class readCSV
 {
 public:
-vect2d  storeCSV2array(const char*const filename,int row,int col);	
+std::vector<int>  storeCSV2array(const char*const filename,int row,int col);	
 };
