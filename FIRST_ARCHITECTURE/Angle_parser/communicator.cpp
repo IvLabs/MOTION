@@ -36,7 +36,7 @@ int main(int argc, char **argv)
      {
        HerkulexClass::moveOne(motor_id[i], motor[i], 22, 1);
      }
-    pub_ang.publish(ang_msg_o);
+    //pub_ang.publish(ang_msg_o);
     
     for (int i=0; i<10; i++)
      {
