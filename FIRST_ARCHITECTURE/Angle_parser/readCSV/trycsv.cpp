@@ -3,16 +3,11 @@
 int main()
 {
 readCSV i;
-vect2d  v;
+std::vector<int>  v;
 
-v=i.storeCSV2array("try.csv",3,3);
-for (int i=0;i<3;i++)
+v=i.storeCSV2array("ang1.csv",3,3);
+for (int j=0;j<5;j++)
 {
-for(int j=0;j<3;j++)
-{
-std::cout<<v[i][j];	
-}	
-std::cout <<"\n";
+std::cout <<v[j] <<std::endl;
 }
-
 }
