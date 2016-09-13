@@ -36,7 +36,7 @@ int main(int argc, char **argv)
           ROS_INFO("row=%d",i);
           for(int j=0;j<col;j++)
              {
-               angles10.angle2motor[j]=data[i][j];//putting values from data to arr row by row
+               arr.angle2motor[j]=data[i][j];//putting values from data to arr row by row
              }
           ang_pub.publish(arr);//publishing to topic angle_to_motor
           ROS_INFO("published");
