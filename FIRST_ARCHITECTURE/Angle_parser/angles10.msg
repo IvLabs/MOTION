@@ -1,2 +1,1 @@
-int64[10] angle2motor
-
+float64[10] angle2motor
