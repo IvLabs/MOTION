@@ -10,11 +10,11 @@ int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
    std::vector<std::string> data;// vector,int to store returned vector by storeCSV2array
-   int row=20;//rows that we want to read from csv file
-   int col=3;//col that we want to read from csv file
+   int row=500;//rows that we want to read from csv file
+   int col=1;//col that we want to read from csv file
 
-   data=file.storeCSV2array("/home/sakshi/.ros/try1.csv",row,col);//by default,the path is taken from .ros
-
+   data=file.storeCSV2array("/home/sakshi/.ros/angle1.csv",row,col);//by default,the path is taken from .ros
+   std::cout << data[4];
 
    ros::init(argc, argv, "angle_parser");//node name=angle_parser
    ros::NodeHandle n;
@@ -30,10 +30,10 @@ int main(int argc, char **argv)
     // {
       for(int i=0;i<row;i++)
         { 
-          ros::Rate loop_rate(1);
-          std::vector<int> vect;
+          ros::Rate loop_rate(100);
+          std::vector<float> vect;
           std::stringstream ss(data.at(i));
-          int m;
+          float m;
           while (ss >> m)
            {
              vect.push_back(m);
@@ -42,14 +42,15 @@ int main(int argc, char **argv)
            }
 
           for (int h=0; h< vect.size();h++)
-             arr.angle2motor[h]=vect.at(h) ; 
-          ang_pub.publish(arr);
-          ROS_INFO("PUBLISHED");
-          int j=arr.angle2motor[3];//for verifying
-          ROS_INFO("%d",j);
- 
-          
-          loop_rate.sleep();
+           {
+           // std::cout<<vect.at(h) << std::endl;
+            arr.angle2motor[h]=vect.at(h) ; 
+           }
+         ang_pub.publish(arr);
+         ROS_INFO("PUBLISHED");
+         float j=arr.angle2motor[0];//for verifying
+         ROS_INFO("%f",j);
+         loop_rate.sleep();
         }
      ros::spinOnce();
      k++;   
