@@ -8,7 +8,9 @@
 int motor;
 void chatterCallback(const std_msgs::Int64::ConstPtr& msg) //ang_msg object
 {  
+  ROS_INFO("YO");
      motor = msg->data;
+     ROS_INFO("i received %d",motor);
      
 }
 
@@ -22,24 +24,26 @@ int main(int argc, char **argv)
   
   ros::init(argc, argv, "communicator");
   ros::NodeHandle i;
-  //ros::NodeHandle o;
-  ros::Subscriber sub_ang = i.subscribe("parse_to_motor", 1000, chatterCallback);
-  //ros::Publisher pub_ang = o.advertise<motion::angles_out>("chatter", 1000);
-  ros::Rate loop_rate(1);
+  ROS_INFO("hi");
+  ros::Subscriber sub_ang = i.subscribe("parse_to_motor", 10, chatterCallback);
+  ROS_INFO("RECEI");
+  ros::Rate loop_rate(20);
   while (ros::ok())
   {
     ros::spinOnce(); //check for incoming messages
     //motion::angles_out ang_msg_o;
     
-       
-       hc.moveOne(19, motor, 100, 1);
-     
+       if(motor>100)
+{
+       ROS_INFO("MOVE");
+       hc.moveOne(19, motor, 50, 1);
+}
+else{ROS_INFO("DIDNT SUB");}     
     //pub_ang.publish(ang_msg_o);
     
-    for (int i=0; i<10; i++)
-     {
+    
        ROS_INFO("%d",motor);
-     }
+     
 
     loop_rate.sleep();
   }
