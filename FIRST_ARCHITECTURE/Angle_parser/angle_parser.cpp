@@ -9,27 +9,18 @@
 int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
-   vect2d data;//2d vector,int
-   int row=3;//rows that we want to read from csv file
+   std::vector<std::string> data;// vector,int to store returned vector by storeCSV2array
+   int row=20;//rows that we want to read from csv file
    int col=3;//col that we want to read from csv file
-   ROS_INFO("ST");
+
    data=file.storeCSV2array("/home/sakshi/.ros/try1.csv",row,col);//by default,the path is taken from .ros
-    ROS_INFO("CT"); 
- 
-//initialising node
+
 
    ros::init(argc, argv, "angle_parser");//node name=angle_parser
    ros::NodeHandle n;
-   ros::Publisher ang_pub = n.advertise<swayat::angles10>("angle_to_motor", 10);//topic name=angle_to_motor
-   for(int i=0;i<row;i++)
-   {
-    for(int j=0;j<col;j++)
-     {
-      ROS_INFO("%d",data[i][j]);
-     }
-      ROS_INFO("YO"); 
-   }
+   ros::Publisher ang_pub = n.advertise<swayat::angles10>("angle_to_motor", 10);//topic name=angle_to_mo
 
+   std::cout << data[1];
    swayat::angles10 arr;
    int no_of_cycles=1;
    int k=0;
@@ -40,19 +31,27 @@ int main(int argc, char **argv)
       for(int i=0;i<row;i++)
         { 
           ros::Rate loop_rate(1);
-          //ROS_INFO("row=%d",i);
-          for(int j=0;j<col;j++)
-             {
-               arr.angle2motor[j]=data[j][i];//putting values from data to arr row by row
-             }
-          ang_pub.publish(arr);//publishing to topic angle_to_motor
-          //ROS_INFO("published");
-          int r=arr.angle2motor[0];
-          ROS_INFO("%d",r);
+          std::vector<int> vect;
+          std::stringstream ss(data.at(i));
+          int m;
+          while (ss >> m)
+           {
+             vect.push_back(m);
+             if (ss.peek() == ',')
+                ss.ignore();
+           }
+
+          for (int h=0; h< vect.size();h++)
+             arr.angle2motor[h]=vect.at(h) ; 
+          ang_pub.publish(arr);
+          ROS_INFO("PUBLISHED");
+          int j=arr.angle2motor[3];//for verifying
+          ROS_INFO("%d",j);
+ 
           
           loop_rate.sleep();
         }
-     //ros::spinOnce();
+     ros::spinOnce();
      k++;   
   //   }    
    }
