@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include "std_msgs/Float64.h"
+#include "std_msgs/Int64.h"
 #include <math.h>
 float motor[300]={
 0,
@@ -310,17 +310,19 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "angle_parser"); //name_of_node: angle_parser
   ros::NodeHandle n;
-  ros::Publisher pub_ang = n.advertise<std_msgs::Float64>("parse_to_motor", 10); //msgs angle_to_motor[i] is published on topic angle_to_motor; quesize: 10
+  ros::Publisher pub_ang = n.advertise<std_msgs::Int64>("parse_to_motor", 10); //msgs angle_to_motor[i] is published on topic angle_to_motor; quesize: 10
   
   ros::Rate loop_rate(100);
 
   while (ros::ok())
   {
-    std_msgs::Float64 ang_msg;
+    std_msgs::Int64 ang_msg;
     ang_msg.data = round(21+((motor[i]+150)/300)*981);
     i++;
+    
     pub_ang.publish(ang_msg);
-    ROS_INFO("%f",ang_msg.data);
+    
+    ROS_INFO("%d",ang_msg.data);
     ros::spinOnce();
     loop_rate.sleep();
     if (i==300)
