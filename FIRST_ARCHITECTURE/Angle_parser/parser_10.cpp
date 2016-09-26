@@ -10,23 +10,25 @@
 int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
-   std::vector<std::string> data;// vector,int to store returned vector by storeCSV2array
-   int row=697;//rows that we want to read from csv file
+   std::vector<std::string> data;// vector,data to store returned vector by storeCSV2array
+   int row=1396;//rows that we want to read from csv file
    int col=20;//col that we want to read from csv file
-   std::cout <<"start";
-   data=file.storeCSV2array("/home/surabhi/.ros/walk_csv.csv",row,col);//by default,the path is taken from .ros
-   std::cout <<"data"<< data[1];
-
+   //std::cout <<"start";
+   data=file.storeCSV2array("/home/surabhi/.ros/walk_roll_change.csv",row,col);//by default,the path is taken from .ros
+   
+   //std::cout <<"data"<< data[1];
+   
    ros::init(argc, argv, "angle_parser");//node name=angle_parser
    ros::NodeHandle n;
    ros::Publisher pub_ang = n.advertise<motion::angles_out>("angle_to_motor", 10);//topic name=angle_to_mo
 
-   std::cout << data[1];
+   //std::cout << data[1][3];
    motion::angles_in arr;
    motion::angles_out arr1;
    int no_of_cycles=1;
    int k=0;
-   /*float zero_offsets[10] = {
+/*
+float zero_offsets[10] = {
 -5.35,
 4.43,
 10.55,
@@ -39,13 +41,11 @@ int main(int argc, char **argv)
 -30.42
 };
 */
-ros::Time begin = ros::Time::now();
-   while (ros::ok())
-   {
-   //if (k<no_of_cycles)
-     {
-      ros::Rate loop_rate(100);
-      for(int i=0;i<row;i++)
+/*
+
+#####  ADDING CELLS IN EXCEL SHEET   #######
+
+for(int i=0;i<row;i++)
         { 
           //ros::Rate loop_rate(50);
           std::vector<float> vect;
@@ -58,13 +58,49 @@ ros::Time begin = ros::Time::now();
              if (ss.peek() == ',')
                 ss.ignore();
            }
+ 
 
+
+vect.at(1) = vect.at(1)+vect.at(11);
+std::cout<<vect.at(1)<<std::endl;
+std::cout<<i<<std::endl;
+
+}
+
+*/
+
+
+ros::Time begin = ros::Time::now();
+   while (ros::ok())
+   {
+   if (k<no_of_cycles)
+     {
+      ros::Rate loop_rate(100);
+      for(int i=0;i<row;i++)
+        { 
+          //ros::Rate loop_rate(1);
+          std::vector<float> vect;
+          std::stringstream ss(data.at(i));
+          float m;
+         
+          while (ss >> m)
+           {
+             vect.push_back(m);
+             if (ss.peek() == ',')
+                ss.ignore();
+           }
+
+          std::cout<<i<<std::endl;
           for (int h=0; h<10; h++)
            { 
 
            // std::cout<<vect.at(h) << std::endl;
-            arr.angle_to_motor_in[h]=vect.at(h)+vect.at(h+10); 
+            vect.at(h) = vect.at(h)+vect.at(h+10);
+            arr.angle_to_motor_in[h]=vect.at(h); 
+            ROS_INFO("%f",arr.angle_to_motor_in[h]);
+            
            }
+           //std::cout << i<<std::endl;
          for (int h=0; h<10; h++)
            {
             arr.angle_to_motor_in[h]=vect.at(h) ; 
@@ -73,8 +109,9 @@ ros::Time begin = ros::Time::now();
             //ROS_INFO("%f",a);
             //ROS_INFO("HI");
             arr1.angle_to_motor_out[h]=round(21+(a/300)*981);
+
            // ROS_INFO("HERE");
-            ROS_INFO("%d",arr1.angle_to_motor_out[h]);
+            ////////ROS_INFO("%d",arr1.angle_to_motor_out[h]);
             //ROS_INFO("BYE");
            }
         
@@ -82,13 +119,17 @@ ros::Time begin = ros::Time::now();
         // ROS_INFO("PUBLISHED");
          //float j=arr.angle_to_motor_in[0];//for verifying
          //ROS_INFO("%f",j);
+
          loop_rate.sleep();
+
+
         }
      ros::spinOnce();
-     //k++;
+     k++;
 double secs_current =ros::Time::now().toSec();
  ROS_INFO("%f",secs_current);  
-     }    
+     }   
    }
+
 return 0;
 }
