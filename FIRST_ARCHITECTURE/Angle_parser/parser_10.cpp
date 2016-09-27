@@ -1,30 +1,31 @@
 //date:12/9/16
 //written by-sakshi
 //receives data from csv file and published on a node with custom msg int64[10]
+//git; offsets in excel sheet added
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "readCSV.cpp"
-#include "motion/angles_in.h"
-#include "motion/angles_out.h"
+#include "motion_test/angles_in.h"
+#include "motion_test/angles_out.h"
 
 int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
    std::vector<std::string> data;// vector,data to store returned vector by storeCSV2array
-   int row=1396;//rows that we want to read from csv file
+   int row=1399;//rows that we want to read from csv file
    int col=20;//col that we want to read from csv file
    //std::cout <<"start";
-   data=file.storeCSV2array("/home/surabhi/.ros/walk_roll_change.csv",row,col);//by default,the path is taken from .ros
+   data=file.storeCSV2array("/home/surabhi/.ros/walk_ver1_27.csv",row,col);//by default,the path is taken from .ros /home/surabhi/.ros/walk_ver1_27.csv
    
    //std::cout <<"data"<< data[1];
    
    ros::init(argc, argv, "angle_parser");//node name=angle_parser
    ros::NodeHandle n;
-   ros::Publisher pub_ang = n.advertise<motion::angles_out>("angle_to_motor", 10);//topic name=angle_to_mo
+   ros::Publisher pub_ang = n.advertise<motion_test::angles_out>("angle_to_motor", 10);//topic name=angle_to_mo
 
    //std::cout << data[1][3];
-   motion::angles_in arr;
-   motion::angles_out arr1;
+   motion_test::angles_in arr;
+   motion_test::angles_out arr1;
    int no_of_cycles=1;
    int k=0;
 /*
@@ -42,9 +43,7 @@ float zero_offsets[10] = {
 };
 */
 /*
-
 #####  ADDING CELLS IN EXCEL SHEET   #######
-
 for(int i=0;i<row;i++)
         { 
           //ros::Rate loop_rate(50);
@@ -59,22 +58,18 @@ for(int i=0;i<row;i++)
                 ss.ignore();
            }
  
-
-
 vect.at(1) = vect.at(1)+vect.at(11);
 std::cout<<vect.at(1)<<std::endl;
 std::cout<<i<<std::endl;
-
 }
-
 */
 
 
 ros::Time begin = ros::Time::now();
    while (ros::ok())
    {
-   if (k<no_of_cycles)
-     {
+   //if (k<no_of_cycles)
+     //{
       ros::Rate loop_rate(100);
       for(int i=0;i<row;i++)
         { 
@@ -129,7 +124,9 @@ ros::Time begin = ros::Time::now();
 double secs_current =ros::Time::now().toSec();
  ROS_INFO("%f",secs_current);  
      }   
-   }
+  // }
 
 return 0;
 }
+
+    
