@@ -81,7 +81,7 @@ public:
 
   void  writeRegistryRAM(int servoID, int address, int writeint);
   void  writeRegistryEEP(int servoID, int address, int writeint);
-
+  void  Close();
 
 // private area
 private:
