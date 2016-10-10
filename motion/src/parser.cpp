@@ -11,25 +11,26 @@ int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
    std::vector<std::string> data;// vector,data to store returned vector by storeCSV2array
-   int row=1396;//rows that we want to read from csv file
+   int row=399;//rows that we want to read from csv file
    int col=20;//col that we want to read from csv file
  
-   data=file.storeCSV2array("/home/sakshi/.ros/walk_roll_change.csv",row,col);//by default,the path is taken from .ros
+   data=file.storeCSV2array("/home/sakshi/.ros/knee_p_incre_trial1.csv",row,col);//by default,the path is taken from .ros
    ros::init(argc, argv, "parser");//node name=angle_parser
    ros::NodeHandle n;
    ros::Publisher pub_ang = n.advertise<motion::angles_out>("angle_to_motor", 10);//topic name=angle_to_mo
    motion::angles_in arr;
    motion::angles_out arr1;
-   int no_of_cycles=5;
+   int no_of_cycles=1;
    int k=0;
    ros::Time begin = ros::Time::now();
    while (ros::ok())
    {
    if (k<no_of_cycles)
-     {
+  {
       ros::Rate loop_rate(100);
       for(int i=0;i<row;i++)
         { 
+          std::cout<<i<<std::endl;
           std::vector<float> vect;
           std::stringstream ss(data.at(i));
           float m;
@@ -54,7 +55,7 @@ int main(int argc, char **argv)
             arr1.angle_to_motor_out[h]=round(21+(a/300)*981);
 
            }
-        
+         
          pub_ang.publish(arr1);
 
 
@@ -64,9 +65,9 @@ int main(int argc, char **argv)
         }
      ros::spinOnce();
      k++;
-double secs_current =ros::Time::now().toSec();
- ROS_INFO("%f",secs_current);  
-     }   
+//double secs_current =ros::Time::now().toSec();
+ //ROS_INFO("%f",secs_current);  
+    }   
    }
 
 return 0;
