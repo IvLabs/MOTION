@@ -22,5 +22,6 @@ class serialUSB
 	   SerialStream serial_port ;
 	   serialUSB(const char* const SERIAL_PORT_DEVICE ,int baudrate );   //constructor //const char* const is a constant pointer to a constant char 
 	   void sendData(int* s,int array_length);
+	   void  Close();
 	  
 };
