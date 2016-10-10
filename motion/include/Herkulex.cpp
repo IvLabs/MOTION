@@ -765,5 +765,9 @@ void HerkulexClass::addData(int GoalLSB, int GoalMSB, int set, int servoID)
   moveData[conta++]=set;
   moveData[conta++]=servoID;
 }
+void HerkulexClass::Close()
+{
+  ser_obj.Close();
+}
 
  HerkulexClass Herkulex;
