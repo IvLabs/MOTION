@@ -77,3 +77,7 @@ void serialUSB::sendData(int* s,int array_length)
     
 }
    }
+void serialUSB::Close()
+{
+  serial_port.Close();
+}
