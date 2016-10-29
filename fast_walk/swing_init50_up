@@ -5,22 +5,22 @@ var_stance=1;
 var_swing=1;
 l1=92;
 l2=92;
-x_foot_stance=0;
-z_foot_stance=0;
 
 interpolations=50;
 step_length=50;
-increment_factor=0.6;
+increment_factor=0.1;
 step_height=20;
 x_max=step_length/4;
 
 x_foot_swing_init=-2*x_max;
-z_foot_swing_init=0+step_height*increment_factor; %keep stance foot centre a bit above
+z_foot_swing_init=0+step_height*increment_factor; %keep swing foot centre a bit above
+x_foot_stance=0;
+z_foot_stance=0+step_height*increment_factor;
 
 x_hip=linspace(-x_max,0,interpolations);
 z_hip(1,1:interpolations)=170+28;  %height of pendulum
 x_ankle=linspace(-2*x_max,2*x_max,interpolations);
-z_ankle=(step_height/2)*cos(x_ankle*pi/(2*x_max))+(step_height*increment_factor);
+z_ankle=(step_height/2)*cos(x_ankle*pi/(2*x_max))+(step_height*0.5)+z_foot_swing_init;
                                                  %keep swing foot centre a bit above
 figure 
 plot(x_ankle,z_ankle);
