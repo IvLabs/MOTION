@@ -15,7 +15,7 @@ x_max=step_length/4;
 x_foot_swing_init=-2*x_max;
 z_foot_swing_init=0; %keep stance foot centre a bit above
 x_foot_stance=0;
-z_foot_stance=step_height*increment_factor;
+z_foot_stance=0+step_height*increment_factor;
 
 x_hip=linspace(-x_max,x_max,interpolations);
 z_hip(1,1:interpolations)=170+28;  %height of pendulum
