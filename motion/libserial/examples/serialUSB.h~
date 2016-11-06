@@ -1,0 +1,25 @@
+// connect to the serial port
+// set the baud rate of the serial port
+// read the serial port 
+// send data to the serial port
+
+
+#ifndef _serialUSB_h_
+#define _serialUSB_h_
+
+#include <iostream>
+#include <fstream>
+#include <SerialStream.h>
+#include <stdlib.h>
+
+class serialUSB
+{
+	 public:
+	   const char* const SERIAL_PORT_DEVICE;  //which is a constant pointer to a constant char 
+	   SerialStream serial_port ;
+	   serialUSB(const char* const SERIAL_PORT_DEVICE ,unsigned long int baudrate );   //constructor
+	   void writeUSB(byte* data);
+	   using namespace LibSerial;
+	     
+}
+

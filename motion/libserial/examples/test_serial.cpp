@@ -1,0 +1,10 @@
+#include "serialUSB.cpp"
+
+int main()
+{
+
+    int s[]={0xFF,0xFF,0x0A,0x05,0x03,0x38,0xC6,0x35,0x01,0x01};
+	serialUSB ser_obj("/dev/ttyUSB1",57600);
+    ser_obj.sendData(s,10); 
+	return 0;
+}
