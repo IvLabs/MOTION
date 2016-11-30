@@ -1,1 +1,1 @@
-float64[12] angle_to_motor_in
+float64[16] angle_to_motor_in
