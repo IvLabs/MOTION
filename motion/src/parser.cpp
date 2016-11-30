@@ -1,4 +1,5 @@
 //date:26/11/16
+//last edited:30/11/16
 //written by-sakshi
 //receives data from csv file and published on a node with custom msg int64[10]
 #include "ros/ros.h"
@@ -12,23 +13,23 @@ int main(int argc, char **argv)
 {
    readCSV file;//object of class readCSV
    std::vector<std::string> data;// vector,data to store returned vector by storeCSV2array
-   int row=279;
-   int col=22;//20;//col that we want to read from csv file
+   int row=119;
+   int col=28;//20;//col that we want to read from csv file
  
-   data=file.storeCSV2array("/home/sakshi/.ros/Fira_walk.csv",row,col);//by default,the path is taken from .ros
+   data=file.storeCSV2array("/home/sakshi/.ros/fira_all_tap_new_offset.csv",row,col);//by default,the path is taken from .ros
    ros::init(argc, argv, "parser");//node name=angle_parser
    ros::NodeHandle n;
    ros::Publisher pub_ang = n.advertise<motion::angles_out>("angle_to_motor", 10);//topic name=angle_to_mo
    motion::angles_in arr;
    motion::angles_out arr1;
-   int no_of_cycles=30;
+   int no_of_cycles=60;
    int k=0;
    ros::Time begin = ros::Time::now();
    while (ros::ok())
    {
- //if (k<no_of_cycles)
-//{
-      ros::Rate loop_rate(200);
+ if (k<no_of_cycles)
+{
+      ros::Rate loop_rate(100);
       for(int i=0;i<row;i++)
         { 
           std::cout<<i<<std::endl;
@@ -41,23 +42,31 @@ int main(int argc, char **argv)
              if (ss.peek() == ',')
                 ss.ignore();
            }
-          for (int h=0; h<10; h++)
+          for (int h=0; h<12; h++)
            { 
-            vect.at(h) = vect.at(h)+vect.at(h+10);
+            vect.at(h) = vect.at(h)+vect.at(h+12);
             arr.angle_to_motor_in[h]=vect.at(h); 
            // ROS_INFO("%f",arr.angle_to_motor_in[0]);
            }
 
-            arr.angle_to_motor_in[10]=vect.at(20) ; 
-            float b = (arr.angle_to_motor_in[10]+150);
-            arr1.angle_to_motor_out[10]=round(21+(b/300)*981);
+            arr.angle_to_motor_in[12]=vect.at(24) ; 
+            float b = (arr.angle_to_motor_in[12]+150);
+            arr1.angle_to_motor_out[12]=round(21+(b/300)*981);
 
-            arr.angle_to_motor_in[11]=vect.at(21) ; 
-            float c = (arr.angle_to_motor_in[11]+150);
-            arr1.angle_to_motor_out[11]=round(21+(c/300)*981);
+            arr.angle_to_motor_in[13]=vect.at(25) ; 
+            float c = (arr.angle_to_motor_in[13]+150);
+            arr1.angle_to_motor_out[13]=round(21+(c/300)*981);
+
+            arr.angle_to_motor_in[14]=vect.at(26) ; 
+            float d = (arr.angle_to_motor_in[14]+150);
+            arr1.angle_to_motor_out[14]=round(21+(d/300)*981);
+
+            arr.angle_to_motor_in[15]=vect.at(27) ; 
+            float e = (arr.angle_to_motor_in[15]+150);
+            arr1.angle_to_motor_out[15]=round(21+(e/300)*981);
 
  
-          for (int h=0; h<10; h++)
+          for (int h=0; h<12; h++)
            {
             arr.angle_to_motor_in[h]=vect.at(h) ; 
 
@@ -81,8 +90,9 @@ int main(int argc, char **argv)
      k++;
 //double secs_current =ros::Time::now().toSec();
  //ROS_INFO("%f",secs_current); 
-//}   
+}   
   }
 
 return 0;
 }
+
