@@ -35,9 +35,9 @@ int main(int argc, char **argv)
              if (ss.peek() == ',')
                 ss.ignore();
            }
-          for (int h=0; h<16; h++)
+          for (int h=0; h<(col/2); h++)
            { 
-            vect.at(h) = vect.at(h)+vect.at(h+16);
+            vect.at(h) = vect.at(h)+vect.at(h+(col/2));
             angle_matrix[i][h] = vect.at(h); 
             angle_matrix[i][h] = round(((angle_matrix[i][h]+150)/300)*981+21);
            }
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
       for (int i=0; i<row; i++)
       {
        //std::cout<<i<<std::endl;
-       for (int h=0; h<16; h++)
+       for (int h=0; h<(col/2); h++)
        {
        arr1.angle_to_motor_out[h] = angle_matrix[i][h];
        } 
