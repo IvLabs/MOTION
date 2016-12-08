@@ -26,6 +26,14 @@
 #include <sstream>
 #include <fstream>
 #include "std_msgs/Int8.h"
+
+#include <SerialPort.h>
+#include <iostream>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <unistd.h>
+
+
 /*
 flags(from dmn to parser)
 1=initial_forward
@@ -125,14 +133,21 @@ int main(int argc, char **argv)
    ros::Subscriber sub_pose = c.subscribe("/apriltags/marker", 1, pose_callback);
    ros::Publisher pub_flag = f.advertise<std_msgs::Int8>("flag_to_nodes", 10); usleep(1000*1000);
    std_msgs::Int8 flag;
+   std_msgs::Int8 msg;
    std_msgs::Int8 status;
-   ros::Rate loop_rate(10);
    // INCLUDE SERIAL READ FROM TIVA 
-
+   
+   SerialPort s("/dev/ttyACM0");
+   SerialPort::BaudRate b;
+   b=s.BAUD_9600;
+   s.Open(b);
+   ros::Rate loop_rate(50);
 while (ros::ok())
 {
  ros::spinOnce();
- 
+ msg.data =s.ReadByte();
+ switch_val=msg.data;
+
  if (switch_val == 1){
         flag.data = 0; //start conveyor (ready position) store flag.data in a variable in conveyor and let it be 0 or true always.
         loop=1;
@@ -181,8 +196,6 @@ if(start_back_walk == 1)
         pub_flag.publish(flag); 
         loop--;
        }
-   
-
 }
  return 0;
 }
