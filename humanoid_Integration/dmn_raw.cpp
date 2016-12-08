@@ -121,7 +121,7 @@ int main(int argc, char **argv)
    ros::Publisher pub_flag = f.advertise<std_msgs::Int8>("flag_to_nodes", 10); usleep(1000*1000);
    std_msgs::Int8 flag;
    std_msgs::Int8 status;
-   ros::Rate loop_rate(10);
+ros::Rate loop_rate(10);  //to decide proper loop rate
 
 while (ros::ok())
 {
@@ -168,10 +168,10 @@ if(start_back_walk == 1)
 
  if(loop>0)
        {
-        pub_flag.publish(flag); 
+        pub_flag.publish(flag);  //send to parser
         loop--;
        }
-   
+loop_rate.sleep();  
 
 }
  return 0;
