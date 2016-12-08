@@ -26,7 +26,6 @@
 #include <sstream>
 #include <fstream>
 #include "std_msgs/Int8.h"
-
 /*
 flags(from dmn to parser)
 1=initial_forward
@@ -36,57 +35,62 @@ flags(from dmn to parser)
 5=back walk
 6=leg from back to front (to obtain initial position)
 7=initial_back
-8=leg from frnt to back (to obtain initial position)
+8=leg from front to back (to obtain initial position)
 status (from parser) on completing the gait 
 11
 21
 31.. indicates completion of the respective gaits
 */
 
-int start = 0; int stat=0; int k=1;
+int stat=0; int k=1; int back=0;
+
 float z_threshold; float yaw_threshold; //to be set according to robot behavior
+// if it crosses a particular yaw_threshold it should start turning 
+// if it travelles more than z_threshold it should start walking back
+  
 float error_yaw; // allowable yaw error
-float z_reference; float yaw_reference;
-float z_current; float yaw_current;
-int start_back_walk = 0; int start_back_walk = 0;
-float tag_endline = 0.3; //distance between april tag and endline(in meters)
+float z_reference; float yaw_reference; //taken at the start line in ready state
+float z_current; float yaw_current; 
+int start_back_walk = 0; int start_front_walk = 0;
+float tag_endline = 0.3; //distance between april tag and endline(in meters) //reduce it (0.25)
 
 
-void pose_callback(const visualization_msgs::Marker::ConstPtr& marker)
+void pose_callback(const visualization_msgs::Marker::ConstPtr& marker) //reduce the speed at which aprilTag node is publishing data. Callback should not be busy
 //const apriltags::AprilTagDetections::ConstPtr& detections)
 {
-  if (start<1){ //&& if ready switch is pressed
+  
+  if (switch_val == 1){ // if ready switch is pressed(say switch 1). This will be true till start switch is not pressed
     z_reference = marker->pose.position.z; //threshold before start switch(to activate initial_step node) is not pressed
-    yaw_reference = marker->pose.orientation.z;
+    yaw_reference = marker->pose.orientation.z;    
    }
-  start++;
 
-  else if (start==1) //&& if start switch is pressed
+  else if (switch_val==2) //&& if start switch is pressed(say switch 2)
    {
     z_current=marker->pose.position.z;
     yaw_current=marker->pose.orientation.z;
-    if(z_current<tag_endline)
-      start_back_walk = 1;
-    else
+
+    if (back==0)
       start_front_walk = 1;
+    else if(z_current < tag_endline)
+      start_back_walk = 1; back = 1;
    }
 }
 
 }
-void status_callback(const std_msgs::Int8::ConstPtr& msg)
+void status_callback(const std_msgs::Int8::ConstPtr& msg) //status of completion of parser
 { 
-  stat = msg->data; //at a time status is received by one parsernode
+  stat = msg->data; //at a time status is received by one parsernode only.
   loop=1;
 }
 
 void orient(int init_step_f, int left_turn_f, int right_turn_f)
 {
         if (yaw_current < abs(yaw_reference - yaw_threshold ))
-          flag.data=init_step_f; //take initial_back step
+          flag.data=init_step_f; //take front_initial_step or back_initial_step
         else if (yaw_current > abs(yaw_reference - yaw_threshold ))
           {
            if (yaw_current > (yaw_reference - yaw_threshold ))//left turn
-             flag.data=init_step_f;
+             flag.data=left_turn_f;
            else if (yaw_current < (yaw_reference - yaw_threshold ))//right turn
              flag.data=right_turn_f;
            }
@@ -103,12 +107,13 @@ void turn()
 void correct_dev(int walk_back_f, int front_to_back_f)
 {
         if (yaw_current < abs(yaw_reference - yaw_threshold ))
-          flag.data=walk_back_f,; //continue to walk back
+          flag.data=walk_back_f,; //continue to walk back or front
         else if (yaw_current > abs(yaw_reference - yaw_threshold ))
           {
-           flag.data = front_to_back_f; //get foot from front_to_back
+           flag.data = front_to_back_f; //get foot from front_to_back or back to front
           }        
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
@@ -121,27 +126,32 @@ int main(int argc, char **argv)
    ros::Publisher pub_flag = f.advertise<std_msgs::Int8>("flag_to_nodes", 10); usleep(1000*1000);
    std_msgs::Int8 flag;
    std_msgs::Int8 status;
-ros::Rate loop_rate(10);  //to decide proper loop rate
+   ros::Rate loop_rate(10);
+   // INCLUDE SERIAL READ FROM TIVA 
 
 while (ros::ok())
 {
  ros::spinOnce();
  
- if(k>0){ //&& start_switch is pressed
-        flag.data=1; //initial 
+ if (switch_val == 1){
+        flag.data = 0; //start conveyor (ready position) store flag.data in a variable in conveyor and let it be 0 or true always.
         loop=1;
-     }
+   }
+ 
 
 if(start_front_walk == 1) 
 {
-
+   if(k>0){ 
+        flag.data=1; //front_initial_step 
+        loop=1;
+     } 
    if (stat==11) //initial_step_complete
      flag.data=2; //initiate front_walk
-   else if (stat==21)//walking_steps_complete
-     correct_dev(2,6)
+   else if (stat==21)// 'x' walking_steps_complete
+     correct_dev(2,6) // correct deviation after 'x' steps
    else if (stat==61) //foot at initial position
-     turn();
-   else if (stat==31 || stat==41)
+     turn(); //turn
+   else if (stat==31 || stat==41) //one step turn complete
       orient(1,3,4);
 }  
 
@@ -153,9 +163,9 @@ if(start_back_walk == 1)
    flag.data = 6; //back to front
   else if (stat==61) //foot at initial position
    flag.data = 7; //back_initial
-  else if (stat==71) 
+  else if (stat==71) //initial_back_step complete
    flag.data = 5; //start back_walk
-  else if (stat==51)//walking_steps_complete
+  else if (stat==51)//'x' back_walking_steps_complete
      correct_dev(5,8);
   else if (stat==81) //foot at initial position
      turn();
@@ -168,15 +178,14 @@ if(start_back_walk == 1)
 
  if(loop>0)
        {
-        pub_flag.publish(flag);  //send to parser
+        pub_flag.publish(flag); 
         loop--;
        }
-loop_rate.sleep();  
+   
 
 }
  return 0;
 }
 
   
-
 
