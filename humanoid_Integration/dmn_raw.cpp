@@ -27,6 +27,22 @@
 #include <fstream>
 #include "std_msgs/Int8.h"
 
+/*
+flags(from dmn to parser)
+1=initial_forward
+2=forward walk
+3=left turn from initial position
+4=right turn from initial position
+5=back walk
+6=leg from back to front (to obtain initial position)
+7=initial_back
+8=leg from frnt to back (to obtain initial position)
+status (from parser) on completing the gait 
+11
+21
+31.. indicates completion of the respective gaits
+*/
+
 int start = 0; int stat=0; int k=1;
 float z_threshold; float yaw_threshold; //to be set according to robot behavior
 float error_yaw; // allowable yaw error
